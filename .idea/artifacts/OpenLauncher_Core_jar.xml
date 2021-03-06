@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="OpenLauncher.Core:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/OpenLauncher_Core_jar</output-path>
+    <root id="archive" name="OpenLauncher.Core.jar">
+      <element id="module-output" name="OpenLauncher.Core" />
+    </root>
+  </artifact>
+</component>
