@@ -1,5 +1,6 @@
 package config;
 
+import config.base.GameMode;
 import config.base.GameModeConfig;
 import util.filemanager.R;
 import version.base.serialization.Json;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.google.gson.GsonBuilder;
 
 public class Config {
 
@@ -49,23 +49,22 @@ public class Config {
         defaultConfigFile.root = System.getProperty("user.home")+"/.minecraft";
         defaultConfigFile.username = "test";
 
-        defaultConfigFile.vanilla = new VanillaConfig();
+        defaultConfigFile.vanilla = new VanillaDataConfig();
 
         defaultConfigFile.vanilla.manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
         defaultConfigFile.vanilla.resourcesUrl = "http://resources.download.minecraft.net";
         defaultConfigFile.vanilla.manifestFileName = "version_manifest_v2.json";
         defaultConfigFile.vanilla.config = defaultConfigFile;
 
-        defaultConfigFile.fabric = new FabricConfig();
+        defaultConfigFile.fabric = new FabricDataConfig();
         defaultConfigFile.fabric.manifestUrl = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/maven-metadata.xml";
         defaultConfigFile.fabric.resourcesUrl = "https://maven.fabricmc.net/net/fabricmc/fabric-installer";
-        defaultConfigFile.fabric.manifestFileName = "metaFabric.xml";
-        defaultConfigFile.fabric.manifestPath = "src/main/resources/config/";
+        defaultConfigFile.fabric.manifestFileName = "version_manifest_fabric.xml";
         defaultConfigFile.fabric.config = defaultConfigFile;
     }
 
-    public VanillaConfig vanilla;
-    public FabricConfig fabric;
+    public VanillaDataConfig vanilla;
+    public FabricDataConfig fabric;
 
     public transient GameModeConfig modeConfig;
 

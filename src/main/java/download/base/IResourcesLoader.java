@@ -14,13 +14,13 @@ public interface IResourcesLoader {
 
     void downloadVersionManifest() throws IOException;
 
-    void downloadVersionConfig(IVersion manifest) throws IOException;
+    void downloadVersionConfig(IVersion manifest) throws Exception;
 
     void downloadAssetManifest(IVersionConfig versionConfig) throws Exception;
 
     IAssetConfig readAssetConfig(IVersionConfig versionConfig) throws Exception;
 
-    IVersionManifest readVersionManifest() throws IOException;
+    IVersionManifest readVersionManifest() throws Exception;
 
     IVersionConfig readVersionConfig(IVersion manifest) throws IOException;
 }

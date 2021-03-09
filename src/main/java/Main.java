@@ -1,18 +1,10 @@
 import builder.base.IBuilder;
 import builder.vanilla.Builder;
-import com.google.gson.Gson;
 import config.Config;
-import config.GameMode;
+import config.base.GameMode;
 import download.vanilla.ResourcesLoader;
-import util.filemanager.R;
 import version.base.*;
-import version.base.serialization.Json;
-import version.vanilla.VersionConfig;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -43,11 +35,11 @@ public class Main {
 
         config.chooseGameMode(GameMode.vanilla);
 
-        ResourcesLoader loader = new ResourcesLoader(config);
+        ResourcesLoader loader = new ResourcesLoader(config.modeConfig);
         IVersionManifest manifest = loader.readVersionManifest();
         //IVersionConfig versionConfig = loader.readVersionConfig(manifest.getLatest(VersionType.release));
 
-        IVersion minecraftVersion = manifest.getByID("1.15.2");
+        IVersion minecraftVersion = manifest.getByID("1.16.5");
         loader.downloadVersionConfig(minecraftVersion);
         IVersionConfig versionConfig = loader.readVersionConfig(minecraftVersion);
         loader.downloadAssetManifest(versionConfig);

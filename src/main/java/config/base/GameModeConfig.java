@@ -1,11 +1,10 @@
 package config.base;
 
 import config.Config;
-import config.GameMode;
 
 public class GameModeConfig {
 
-    public String manifestUrl, manifestPath, manifestFileName;
+    public String manifestUrl, manifestFileName;
     public String assetsUrl, assetsPath, assetFileName;
     public String resourcesUrl;
 
@@ -15,9 +14,6 @@ public class GameModeConfig {
         return manifestUrl;
     }
 
-    public String getManifestPath() {
-        return manifestPath;
-    }
 
     public String getResourcesUrl() {
         return resourcesUrl;

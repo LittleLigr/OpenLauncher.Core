@@ -10,7 +10,7 @@ import java.util.Optional;
 public class VersionManifest implements IVersionManifest {
 
     private VersionManifestLatest latest;
-    private ArrayList<IVersion> versions = new ArrayList<>();
+    private ArrayList<VersionM2> versions = new ArrayList<>();
 
     @Override
     public IVersion getLatest(VersionType versionType) throws Exception {
@@ -20,7 +20,7 @@ public class VersionManifest implements IVersionManifest {
             versionTypeID = latest.release;
         else versionTypeID = latest.snapshot;
 
-        Optional<IVersion> searchResult = versions.stream().filter(x->x.getVersionID().equals(versionTypeID) && x.getVersionType()==versionType).findFirst();
+        Optional<VersionM2> searchResult = versions.stream().filter(x->x.getVersionID().equals(versionTypeID) && x.getVersionType()==versionType).findFirst();
         if(searchResult.isPresent())
             return searchResult.get();
 
@@ -29,7 +29,7 @@ public class VersionManifest implements IVersionManifest {
 
     @Override
     public IVersion getByID(String id) throws Exception {
-        Optional<IVersion> searchResult = versions.stream().filter(x->x.getVersionID().equals(id)).findFirst();
+        Optional<VersionM2> searchResult = versions.stream().filter(x->x.getVersionID().equals(id)).findFirst();
         if(searchResult.isPresent())
             return searchResult.get();
 

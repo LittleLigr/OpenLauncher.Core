@@ -1,6 +1,5 @@
-package download.vanilla;
+package download.fabric;
 
-import config.Config;
 import config.base.GameModeConfig;
 import download.base.IResourcesLoader;
 import util.filemanager.R;
@@ -11,18 +10,18 @@ import version.base.IVersionManifest;
 import version.base.nodes.IVersionArtifact;
 import version.base.nodes.IVersionLibrary;
 import version.base.serialization.Json;
+import version.fabric.FabricManifest;
 import version.vanilla.AssetConfig;
 import version.vanilla.VersionConfig;
 import version.vanilla.VersionManifest;
 
-import java.io.File;
 import java.io.IOException;
 
-public class ResourcesLoader implements IResourcesLoader {
+public class FabricLoader implements IResourcesLoader {
 
-    private final GameModeConfig config;
+    public GameModeConfig config;
 
-    public ResourcesLoader(GameModeConfig config)
+    public FabricLoader(GameModeConfig config)
     {
         this.config = config;
     }
@@ -32,7 +31,6 @@ public class ResourcesLoader implements IResourcesLoader {
         System.out.println("Download game assets and libraries");
         downloadAssets(assetConfig.getArtifacts());
         downloadLibraries(versionConfig.getLibraries());
-        downloadClient(versionConfig);
         System.out.println("Download game data successfully\n");
     }
 
@@ -57,12 +55,6 @@ public class ResourcesLoader implements IResourcesLoader {
         }
     }
 
-    private void downloadClient(IVersionConfig versionConfig) throws IOException {
-        File nativeFolder = new File(config.buildNativesPath(versionConfig.getID()));
-        nativeFolder.mkdirs();
-        R.downloadFromUrl(versionConfig.getClient().getUrl(), config.buildJarPath(versionConfig.getID()));
-    }
-
     @Override
     public void downloadVersionManifest() throws IOException {
         System.out.println("Download version manifest from "+config.manifestUrl+" to "+config.manifestFileName);
@@ -71,11 +63,8 @@ public class ResourcesLoader implements IResourcesLoader {
     }
 
     @Override
-    public void downloadVersionConfig(IVersion manifest) throws IOException {
-        String path = config.buildVersionConfigPath(manifest.getVersionID());
-        System.out.println("Download version config file from "+manifest.getVersionUrl()+" to "+path);
-        R.downloadFromUrl(manifest.getVersionUrl(), path);
-        System.out.println("Download version config successfully\n");
+    public void downloadVersionConfig(IVersion manifest) throws Exception {
+        throw new Exception("Fabric config downloading not supported now.");
     }
 
     @Override
@@ -91,14 +80,13 @@ public class ResourcesLoader implements IResourcesLoader {
     }
 
     @Override
-    public IVersionManifest readVersionManifest() throws IOException {
-        return Json.parse(R.readFile(config.buildManifestPath()), VersionManifest.class);
+    public IVersionManifest readVersionManifest() throws Exception {
+        //return Json.parse(R.readFile(config.buildManifestPath()), VersionManifest.class);
+        throw new Exception("This not available now");
     }
 
     @Override
     public IVersionConfig readVersionConfig(IVersion manifest) throws IOException {
         return Json.parse(R.readFile(config.buildVersionConfigPath(manifest.getVersionID())), VersionConfig.class);
     }
-
-
 }

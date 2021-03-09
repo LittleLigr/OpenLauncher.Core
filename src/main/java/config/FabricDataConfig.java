@@ -1,8 +1,9 @@
 package config;
 
+import config.base.GameMode;
 import config.base.GameModeConfig;
 
-public class FabricConfig extends GameModeConfig {
+public class FabricDataConfig extends GameModeConfig {
 
     @Override
     public GameMode getMode() {

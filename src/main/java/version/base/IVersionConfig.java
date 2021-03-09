@@ -13,9 +13,9 @@ public interface IVersionConfig {
     String getProperty(String id) throws Exception;
     String getMainClass();
     VersionType getType();
-    IVersionArtifact getAssetsIndex();
+    IVersionArtifact getAssetsIndex() throws Exception;
     String getID();
     IVersionArguments getArguments(String id) throws Exception;
-    IVersionArtifact getClient();
+    IVersionArtifact getClient() throws Exception;
 
 }
