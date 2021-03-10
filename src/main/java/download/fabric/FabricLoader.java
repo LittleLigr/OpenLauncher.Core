@@ -20,6 +20,7 @@ import version.vanilla.VersionManifest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FabricLoader implements IResourcesLoader {
 
@@ -87,7 +88,7 @@ public class FabricLoader implements IResourcesLoader {
     public IVersionManifest readVersionManifest() throws Exception {
         File[] directories = new File(config.buildVersionsPath()).listFiles(File::isDirectory);
         FabricManifest manifest = new FabricManifest();
-
+        manifest.versions = new ArrayList<>();
         for (File file : directories)
             if(file.getName().contains("fabric"))
                 manifest.versions.add(new FabricVersion(file.getName()));

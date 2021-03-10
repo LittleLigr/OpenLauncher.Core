@@ -5,18 +5,21 @@ import version.base.VersionType;
 import version.base.nodes.IVersionArguments;
 import version.base.nodes.IVersionArtifact;
 import version.base.nodes.IVersionLibrary;
+import version.fabric.nodes.FabricArguments;
+import version.fabric.nodes.FabricLibrary;
 import version.vanilla.VersionConfig;
+import version.vanilla.standartconfig.VersionArguments;
 import version.vanilla.standartconfig.VersionLibrary;
 
 import java.util.ArrayList;
 
 public class FabricVersionConfig implements IVersionConfig {
 
-    public String id, inheritsFrom, releaseTime, time, mainClass;
+    public String id, inheritsFrom, releaseTime, time, mainClass, assets;
     public VersionType type;
 
-    public VersionConfig.VersionArgumentsContainer arguments;
-    public VersionLibrary[] libraries;
+    public FabricArgumentsContainer arguments;
+    public FabricLibrary[] libraries;
 
     @Override
     public IVersionLibrary[] getLibraries() {
@@ -30,6 +33,7 @@ public class FabricVersionConfig implements IVersionConfig {
             case "inheritsFrom": return inheritsFrom;
             case "releaseTime": return releaseTime;
             case "time": return time;
+            case "assets": return assets;
         }
         throw new Exception("Property "+id+" not detected");
     }
@@ -67,5 +71,18 @@ public class FabricVersionConfig implements IVersionConfig {
     @Override
     public IVersionArtifact getClient() throws Exception {
         throw new Exception("This field not available");
+    }
+
+    public class FabricArgumentsContainer
+    {
+        public FabricArguments game, jvm;
+
+        @Override
+        public String toString() {
+            return "VersionArgumentsContainer{" +
+                    "game=" + game +
+                    ", jvm=" + jvm +
+                    '}';
+        }
     }
 }

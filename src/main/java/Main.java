@@ -41,10 +41,11 @@ public class Main {
         IResourcesLoader fabricLoader = new FabricLoader(config.fabric);
         IVersionManifest fabricManifest = fabricLoader.readVersionManifest();
 
+        IVersionConfig version = fabricLoader.readVersionConfig(fabricManifest.getLatest(VersionType.release));
 
-        FabricVersion version = fabricLoader.readVersionConfig(fabricManifest.getLatest(VersionType.release);
-        IVersionConfig fabricConfig = fabricLoader.readVersionConfig(version);
-
+        IBuilder builder = new Builder(config, version);
+        System.out.println(builder.buildRun());
+        Runtime.getRuntime().exec(builder.buildRun());
 
 
         //System.out.println("Type command. Type \"help\" to get more information.");

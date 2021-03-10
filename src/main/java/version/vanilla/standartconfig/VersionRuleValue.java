@@ -53,6 +53,8 @@ public class VersionRuleValue implements JsonDeserializer<VersionRuleValue>, IVe
 
     @Override
     public OsDescription getOsDescription() {
+        if(rules==null)
+            return null;
         return rules.getOsDescription();
     }
 

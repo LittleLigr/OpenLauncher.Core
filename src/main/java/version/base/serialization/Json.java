@@ -5,6 +5,8 @@ import version.base.IVersion;
 import version.base.IVersionConfig;
 import version.base.IVersionManifest;
 import version.base.nodes.IVersionArguments;
+import version.fabric.nodes.FabricArguments;
+import version.fabric.nodes.FabricLibrary;
 import version.vanilla.VersionConfig;
 import version.vanilla.VersionM2;
 import version.vanilla.VersionManifest;
@@ -47,6 +49,8 @@ public abstract class Json {
         builder.registerTypeAdapter(VersionRuleValue.class, new VersionRuleValue());
         builder.registerTypeAdapter(VersionArguments.class, new VersionArguments());
         builder.registerTypeAdapter(VersionDownloadDescription.class, new VersionDownloadDescription());
+        builder.registerTypeAdapter(FabricLibrary.class, new FabricLibrary());
+        builder.registerTypeAdapter(FabricArguments.class, new FabricArguments());
 
         /*
         Set<Class<? extends JsonDeserializer>> jsonDeserializatoImpl = reflections.getSubTypesOf(JsonDeserializer.class);
@@ -64,6 +68,21 @@ public abstract class Json {
          */
 
         return builder;
+    }
+
+    public static <T> T parse(JsonArray json, Class<T> className)
+    {
+        return builder.create().fromJson(json, className);
+    }
+
+    public static <T> T parse(JsonObject json, Class<T> className)
+    {
+        return builder.create().fromJson(json, className);
+    }
+
+    public static <T> T parse(JsonElement json, Class<T> className)
+    {
+        return builder.create().fromJson(json, className);
     }
 
     public static <T> T parse(String json, Class<T> className)

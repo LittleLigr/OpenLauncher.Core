@@ -74,7 +74,7 @@ public class VersionConfig implements IVersionConfig {
 
     public class VersionArgumentsContainer
     {
-        public IVersionArguments game, jvm;
+        public VersionArguments game, jvm;
 
         @Override
         public String toString() {

@@ -71,7 +71,7 @@ public class ResourcesLoader implements IResourcesLoader {
     }
 
     @Override
-    public void downloadVersionConfig(IVersion manifest) throws IOException {
+    public void downloadVersionConfig(IVersion manifest) throws Exception {
         String path = config.buildVersionConfigPath(manifest.getVersionID());
         System.out.println("Download version config file from "+manifest.getVersionUrl()+" to "+path);
         R.downloadFromUrl(manifest.getVersionUrl(), path);

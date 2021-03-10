@@ -1,4 +1,4 @@
-package builder.vanilla;
+package builder.fabric;
 
 import builder.base.IBuilder;
 import config.Config;
@@ -7,7 +7,6 @@ import version.base.nodes.IVersionArguments;
 import version.base.nodes.IVersionLibrary;
 import version.base.nodes.IVersionRule;
 import version.base.nodes.OsDescription;
-import version.fabric.nodes.FabricLibrary;
 import version.vanilla.standartconfig.VersionArguments;
 
 import java.util.ArrayList;
@@ -16,12 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Builder implements IBuilder {
+public class FabricBuilder implements IBuilder {
 
     private final Config config;
     public final IVersionConfig versionConfig;
 
-    public Builder(Config config, IVersionConfig versionConfig)
+    public FabricBuilder(Config config, IVersionConfig versionConfig)
     {
         this.config = config;
         this.versionConfig = versionConfig;
@@ -35,16 +34,9 @@ public class Builder implements IBuilder {
         IVersionArguments jvmArguments = versionConfig.getArguments("jvm");
 
         List<IVersionRule> jvmRules = resolveRules(jvmArguments.getRuleArguments());
-        List<IVersionRule> gameRules = resolveRules(gameArguments.getRuleArguments());
-
 
         for (IVersionRule item : jvmRules)
-            for (String value : item.getValues())
-                command += value+" ";
-
-        for (IVersionRule item : gameRules)
-            for (String value : item.getValues())
-                command += value+" ";
+            command += item.getValues();
 
         for(String value : jvmArguments.getStringArguments())
             command+=value+" ";
@@ -59,10 +51,9 @@ public class Builder implements IBuilder {
     private List<IVersionRule> resolveRules(IVersionRule[] rules)
     {
         return Arrays.stream(rules).filter(
-                x->     x == null || x.getOsDescription() == null ||
-                        ((x.getOsDescription().name == null || x.getOsDescription().name.equals(config.systemConfig.name))
+                x-> (x.getOsDescription().name == null || x.getOsDescription().name.equals(config.systemConfig.name))
                         && (x.getOsDescription().arch==null || x.getOsDescription().arch.equals(config.systemConfig.arch))
-                        && (x.getOsDescription().version == null || x.getOsDescription().version.equals(config.systemConfig.version)))
+                        && (x.getOsDescription().version == null || x.getOsDescription().version.equals(config.systemConfig.version))
                         && (x.getAction().equals("allow"))
         ).collect(Collectors.toList());
     }
@@ -74,8 +65,8 @@ public class Builder implements IBuilder {
             List<IVersionRule> librariesList =  Arrays.stream(library.getRules()).filter(
                     x->     x.getOsDescription() == null ||
                             ((x.getOsDescription().name == null || x.getOsDescription().name.equals(config.systemConfig.name))
-                            && (x.getOsDescription().arch==null || x.getOsDescription().arch.equals(config.systemConfig.arch))
-                            && (x.getOsDescription().version == null || x.getOsDescription().version.equals(config.systemConfig.version)))
+                                    && (x.getOsDescription().arch==null || x.getOsDescription().arch.equals(config.systemConfig.arch))
+                                    && (x.getOsDescription().version == null || x.getOsDescription().version.equals(config.systemConfig.version)))
             ).collect(Collectors.toList());
 
             if(librariesList.size() > 0 && librariesList.stream().noneMatch(x->x.getAction().equals("disallow")))
@@ -87,29 +78,11 @@ public class Builder implements IBuilder {
         }
         else
         {
-            if(library.getDownloadDescription().getArtifact()!=null)
-                list.add(library.getDownloadDescription().getArtifact().getPath());
+            list.add(library.getDownloadDescription().getArtifact().getPath());
             if(library.getDownloadDescription().getClassifier(config.systemConfig.name)!=null)
                 list.add(library.getDownloadDescription().getClassifier(config.systemConfig.name).getPath());
-            if(library instanceof FabricLibrary)
-            {
-                String name = ((FabricLibrary) library).name;
-                String[] pathParts = name.split(":");
-                pathParts[0] = pathParts[0].replace(".", "/");
-                String fileName = "";
-
-                for(int i = 1; i < pathParts.length-1; i++)
-                    fileName += pathParts[i]+"-";
-                fileName+=pathParts[pathParts.length-1]+".jar";
-
-                String fullPath = "";
-                for(String part : pathParts)
-                    fullPath+=part+"/";
-                fullPath+=fileName;
-
-                list.add(fullPath);
-            }
         }
+
 
         return list;
     }
@@ -130,7 +103,7 @@ public class Builder implements IBuilder {
         command = command.replace("${natives_directory}", config.modeConfig.buildNativesPath(versionConfig.getID()))
                 .replace("${launcher_name}", config.launcherName)
                 .replace("${launcher_version}", config.launcherVersion)
-                .replace("${classpath}", librariesCP.toString())
+                .replace("${classpath}", librariesCP)
                 .replace("${auth_player_name}", config.username)
                 .replace("${version_name}", versionConfig.getID())
                 .replace("${game_directory}", config.root)
@@ -139,8 +112,7 @@ public class Builder implements IBuilder {
                 .replace("${assets_index_name}", versionConfig.getProperty("assets"))
                 .replace("--userType ${user_type}","")
                 .replace("${auth_access_token}", "{token}")
-                .replace("${auth_uuid}", "{uuid}")
-                .replace("--demo", "");
+                .replace("${auth_uuid}", "{uuid}");
 
         return command;
     }
