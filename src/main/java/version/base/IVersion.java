@@ -19,7 +19,7 @@ public interface IVersion {
      * Return download link to version config file
      * @return
      */
-    String getVersionUrl();
+    String getVersionUrl() throws Exception;
 
     /***
      * return custom property (time, releaseTime)

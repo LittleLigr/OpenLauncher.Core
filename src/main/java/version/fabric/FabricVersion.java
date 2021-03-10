@@ -8,6 +8,13 @@ public class FabricVersion implements IVersion {
 
     private String id, url;
 
+    public FabricVersion(){}
+
+    public FabricVersion(String id)
+    {
+        this.id = id;
+    }
+
     @Override
     public VersionType getVersionType() {
         return VersionType.release;
@@ -19,9 +26,7 @@ public class FabricVersion implements IVersion {
     }
 
     @Override
-    public String getVersionUrl() {
-        return url;
-    }
+    public String getVersionUrl() throws Exception {throw new Exception("FabricVersion don't have url"); }
 
     @Override
     public String getProperty(String propetyID) throws Exception {

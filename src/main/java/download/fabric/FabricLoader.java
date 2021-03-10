@@ -10,11 +10,15 @@ import version.base.IVersionManifest;
 import version.base.nodes.IVersionArtifact;
 import version.base.nodes.IVersionLibrary;
 import version.base.serialization.Json;
+import version.base.serialization.Xml;
 import version.fabric.FabricManifest;
+import version.fabric.FabricVersion;
+import version.fabric.FabricVersionConfig;
 import version.vanilla.AssetConfig;
 import version.vanilla.VersionConfig;
 import version.vanilla.VersionManifest;
 
+import java.io.File;
 import java.io.IOException;
 
 public class FabricLoader implements IResourcesLoader {
@@ -81,12 +85,21 @@ public class FabricLoader implements IResourcesLoader {
 
     @Override
     public IVersionManifest readVersionManifest() throws Exception {
+        File[] directories = new File(config.buildVersionsPath()).listFiles(File::isDirectory);
+        FabricManifest manifest = new FabricManifest();
+
+        for (File file : directories)
+            if(file.getName().contains("fabric"))
+                manifest.versions.add(new FabricVersion(file.getName()));
+        if(manifest.versions.size()>0)
+            manifest.latest = manifest.versions.get(0);
+        return manifest;
         //return Json.parse(R.readFile(config.buildManifestPath()), VersionManifest.class);
-        throw new Exception("This not available now");
+        //throw new Exception("This not available now");
     }
 
     @Override
     public IVersionConfig readVersionConfig(IVersion manifest) throws IOException {
-        return Json.parse(R.readFile(config.buildVersionConfigPath(manifest.getVersionID())), VersionConfig.class);
+        return Json.parse(R.readFile(config.buildVersionConfigPath(manifest.getVersionID())), FabricVersionConfig.class);
     }
 }

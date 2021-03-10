@@ -39,4 +39,6 @@ public class GameModeConfig {
 
     public String buildManifestPath(){ return config.root+"/versions/"+manifestFileName;}
 
+    public String buildVersionsPath(){return config.root+"/versions";}
+
 }

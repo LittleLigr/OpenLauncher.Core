@@ -2,9 +2,13 @@ import builder.base.IBuilder;
 import builder.vanilla.Builder;
 import config.Config;
 import config.base.GameMode;
+import download.base.IResourcesLoader;
+import download.fabric.FabricLoader;
 import download.vanilla.ResourcesLoader;
 import version.base.*;
+import version.fabric.FabricVersion;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -33,22 +37,15 @@ public class Main {
             else System.exit(0);
         }
 
-        config.chooseGameMode(GameMode.vanilla);
+        config.chooseGameMode(GameMode.fabric);
+        IResourcesLoader fabricLoader = new FabricLoader(config.fabric);
+        IVersionManifest fabricManifest = fabricLoader.readVersionManifest();
 
-        ResourcesLoader loader = new ResourcesLoader(config.modeConfig);
-        IVersionManifest manifest = loader.readVersionManifest();
-        //IVersionConfig versionConfig = loader.readVersionConfig(manifest.getLatest(VersionType.release));
 
-        IVersion minecraftVersion = manifest.getByID("1.16.5");
-        loader.downloadVersionConfig(minecraftVersion);
-        IVersionConfig versionConfig = loader.readVersionConfig(minecraftVersion);
-        loader.downloadAssetManifest(versionConfig);
-        IAssetConfig assetConfig = loader.readAssetConfig(versionConfig);
+        FabricVersion version = fabricLoader.readVersionConfig(fabricManifest.getLatest(VersionType.release);
+        IVersionConfig fabricConfig = fabricLoader.readVersionConfig(version);
 
-        loader.downloadResources(versionConfig, assetConfig);
 
-        IBuilder builder = new Builder(config, versionConfig);
-        Runtime.getRuntime().exec(builder.buildRun());
 
         //System.out.println("Type command. Type \"help\" to get more information.");
         //menu(input);
@@ -78,6 +75,23 @@ public class Main {
          */
 
 
+    }
+
+    static void testVanilla(Config config) throws Exception {
+        ResourcesLoader loader = new ResourcesLoader(config.modeConfig);
+        IVersionManifest manifest = loader.readVersionManifest();
+        //IVersionConfig versionConfig = loader.readVersionConfig(manifest.getLatest(VersionType.release));
+
+        IVersion minecraftVersion = manifest.getByID("1.16.5");
+        loader.downloadVersionConfig(minecraftVersion);
+        IVersionConfig versionConfig = loader.readVersionConfig(minecraftVersion);
+        loader.downloadAssetManifest(versionConfig);
+        IAssetConfig assetConfig = loader.readAssetConfig(versionConfig);
+
+        loader.downloadResources(versionConfig, assetConfig);
+
+        IBuilder builder = new Builder(config, versionConfig);
+        Runtime.getRuntime().exec(builder.buildRun());
     }
 
     static void menu(Scanner r)

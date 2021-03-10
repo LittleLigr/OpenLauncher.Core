@@ -57,7 +57,7 @@ public class ResourcesLoader implements IResourcesLoader {
         }
     }
 
-    private void downloadClient(IVersionConfig versionConfig) throws IOException {
+    private void downloadClient(IVersionConfig versionConfig) throws Exception {
         File nativeFolder = new File(config.buildNativesPath(versionConfig.getID()));
         nativeFolder.mkdirs();
         R.downloadFromUrl(versionConfig.getClient().getUrl(), config.buildJarPath(versionConfig.getID()));
