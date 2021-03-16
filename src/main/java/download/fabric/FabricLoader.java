@@ -1,6 +1,7 @@
 package download.fabric;
 
 import config.base.GameModeConfig;
+import download.base.IResourceLoadKeeper;
 import download.base.IResourcesLoader;
 import util.filemanager.R;
 import version.base.IAssetConfig;
@@ -26,6 +27,8 @@ public class FabricLoader implements IResourcesLoader {
 
     public GameModeConfig config;
 
+    private ArrayList<IResourceLoadKeeper> keepers = new ArrayList<>();
+
     public FabricLoader(GameModeConfig config)
     {
         this.config = config;
@@ -34,10 +37,13 @@ public class FabricLoader implements IResourcesLoader {
     @Override
     public void downloadResources(IVersionConfig versionConfig, IAssetConfig assetConfig) throws Exception {
         System.out.println("Download game assets and libraries");
+        start();
         downloadAssets(assetConfig.getArtifacts());
         downloadLibraries(versionConfig.getLibraries());
+        end();
         System.out.println("Download game data successfully\n");
     }
+
 
     private void downloadAssets(IVersionArtifact[] artifacts) throws Exception {
         String path = config.buildAssetsDir()+"/objects";
@@ -49,7 +55,8 @@ public class FabricLoader implements IResourcesLoader {
         }
     }
 
-    private void downloadLibraries(IVersionLibrary[] libraries) throws Exception {
+    @Override
+    public void downloadLibraries(IVersionLibrary[] libraries) throws Exception {
         for(IVersionLibrary item : libraries)
         {
             R.downloadFromUrl(item.getDownloadDescription().getArtifact().getUrl(), item.getDownloadDescription().getArtifact().getPath());
@@ -58,6 +65,11 @@ public class FabricLoader implements IResourcesLoader {
             if(nativeLib!=null)
                 R.downloadFromUrl(nativeLib.getUrl(), nativeLib.getPath());
         }
+    }
+
+    @Override
+    public void downloadClient(IVersionConfig versionConfig) throws Exception {
+        throw new Exception("This not supported");
     }
 
     @Override
@@ -102,5 +114,162 @@ public class FabricLoader implements IResourcesLoader {
     @Override
     public IVersionConfig readVersionConfig(IVersion manifest) throws IOException {
         return Json.parse(R.readFile(config.buildVersionConfigPath(manifest.getVersionID())), FabricVersionConfig.class);
+    }
+
+    @Override
+    public boolean assetConfigExist(IVersionConfig versionConfig) {
+        try
+        {
+            IAssetConfig assetConfig = readAssetConfig(versionConfig);
+            String path = config.buildAssetsDir()+"/objects";
+            for(IVersionArtifact item : assetConfig.getArtifacts())
+            {
+                String hash = item.getProperty("hash");
+                boolean value = new File(config.assetsUrl+"/"+hash.charAt(0)+hash.charAt(1)+"/"+hash,
+                        path+"/"+hash.charAt(0)+hash.charAt(1)+"/"+hash).exists();
+                if(!value)
+                    return false;
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean versionManifestExist() {
+        try
+        {
+            readVersionManifest();
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean versionConfigExist(IVersion manifest) {
+        try
+        {
+            readVersionConfig(manifest);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean allFilesExist(IVersion manifest) {
+        try {
+            boolean result = true;
+
+            IVersionConfig versionConfig = readVersionConfig(manifest);
+            result |= assetConfigExist(versionConfig);
+            result |= clientExist(versionConfig);
+            result |= librariesExist(versionConfig);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean clientExist(IVersionConfig versionConfig) {
+        try
+        {
+            return new File(config.buildJarPath(versionConfig.getID())).exists();
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean librariesExist(IVersionConfig versionConfig) {
+        try {
+            boolean buffer;
+            for(IVersionLibrary item : versionConfig.getLibraries())
+            {
+                buffer = new File(config.buildLibraryPath(item.getDownloadDescription().getArtifact().getPath())).exists();
+                if(buffer==false)
+                    return false;
+
+                IVersionArtifact nativeLib = item.getDownloadDescription().getClassifier(config.config.systemConfig.name);
+                if(nativeLib!=null)
+                {
+                    buffer = new File(config.buildLibraryPath(nativeLib.getPath())).exists();
+                    if(buffer==false)
+                        return false;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void tick(float perc) {
+        for(IResourceLoadKeeper keeper : keepers)
+            keeper.tick(perc);
+    }
+
+    @Override
+    public void start() {
+        for(IResourceLoadKeeper keeper : keepers)
+            keeper.start();
+    }
+
+    @Override
+    public void end() {
+        for(IResourceLoadKeeper keeper : keepers)
+            keeper.end();
+    }
+
+    @Override
+    public void addDownloadKeeper(IResourceLoadKeeper keeper) {
+        keepers.add(keeper);
+    }
+
+    @Override
+    public boolean versionReady(IVersion manifest) {
+        try {
+            IVersionConfig versionConfig = readVersionConfig(manifest);
+            IAssetConfig assetConfig = readAssetConfig(versionConfig);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean minecraftMetaReady() {
+        try {
+            File root = new File(config.config.root);
+            if(root.exists() == false)
+                return false;
+            IVersionManifest manifest = readVersionManifest();
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 }

@@ -16,20 +16,18 @@ public class Config {
     public static transient final String configPath = "src/main/resources/config";
     public static transient final String configFileName = "config.json";
 
-    public transient static OSconfig linux = new OSconfig(System.getProperty("user.home") + "/.minecraft", "linux", "", "");
-    public transient static OSconfig windows = new OSconfig(System.getProperty("user.home") + "/.minecraft", "windows", "", "");
-    public transient static OSconfig osx = new OSconfig(System.getProperty("user.home") + "/.minecraft", "osx", "", "");
+    public transient static OSconfig linux = new OSconfig(System.getProperty("user.home") + "/.minecraft", "linux", "", "", ":");
+    public transient static OSconfig windows = new OSconfig(System.getProperty("user.home") + "/AppData/Roaming/.minecraft", "windows", "", "", ";");
+    public transient static OSconfig osx = new OSconfig(System.getProperty("user.home") + "/.minecraft", "osx", "", "", ":");
 
-    public transient String launcherName = "OpenLauncher.Core";
-    public transient String launcherVersion = "1.0";
+    public transient static String name = "OpenLauncher.Core";
+    public transient static String version = "1.0";
 
     public static Config createDefaultConfig()
     {
         String configJson = Json.parse(Config.defaultConfigFile, Config.class);
-        try { ;
-            File configFolder = new File(configPath);
-            configFolder.mkdirs();
-            File config = new File(configPath+"/"+configFileName);
+        try {
+            File config = new File(configFileName);
             config.createNewFile();
             Files.write(Paths.get(config.getPath()), configJson.getBytes());
             System.out.println("Create default config successfully");
@@ -41,13 +39,15 @@ public class Config {
     }
 
     public static Config loadConfig() throws IOException {
-        return Json.parse(R.readFile(Config.configPath+"/"+configFileName), Config.class);
+        Config config = Json.parse(R.readFile(configFileName), Config.class);
+        System.out.println("Load config successfully");
+        return config;
     }
 
     private static transient final Config defaultConfigFile = new Config();
     static {
-        defaultConfigFile.root = System.getProperty("user.home")+"/.minecraft";
-        defaultConfigFile.username = "test";
+        defaultConfigFile.root = getOs().defaultRoot;
+        defaultConfigFile.username = "user";
 
         defaultConfigFile.vanilla = new VanillaDataConfig();
 
@@ -97,5 +97,15 @@ public class Config {
         }
 
         modeConfig.config = this;
+    }
+
+    private static OSconfig getOs()
+    {
+        String os = System.getProperty("os.name");
+        if(os.contains("win"))
+            return windows;
+        else if(os.contains("lin"))
+            return linux;
+        else return osx;
     }
 }

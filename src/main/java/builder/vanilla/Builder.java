@@ -122,14 +122,14 @@ public class Builder implements IBuilder {
 
         String librariesCP = "";
         for(String value : usedLibraries)
-            librariesCP+=config.modeConfig.buildLibraryPath(value)+":";
+            librariesCP+=config.modeConfig.buildLibraryPath(value)+config.systemConfig.cpDelimeter;
 
         librariesCP+=config.modeConfig.buildJarPath(versionConfig.getID());
         librariesCP+=" "+versionConfig.getMainClass();
 
         command = command.replace("${natives_directory}", config.modeConfig.buildNativesPath(versionConfig.getID()))
-                .replace("${launcher_name}", config.launcherName)
-                .replace("${launcher_version}", config.launcherVersion)
+                .replace("${launcher_name}", config.name)
+                .replace("${launcher_version}", config.version)
                 .replace("${classpath}", librariesCP.toString())
                 .replace("${auth_player_name}", config.username)
                 .replace("${version_name}", versionConfig.getID())

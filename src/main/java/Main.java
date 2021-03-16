@@ -37,15 +37,7 @@ public class Main {
             else System.exit(0);
         }
 
-        config.chooseGameMode(GameMode.fabric);
-        IResourcesLoader fabricLoader = new FabricLoader(config.fabric);
-        IVersionManifest fabricManifest = fabricLoader.readVersionManifest();
 
-        IVersionConfig version = fabricLoader.readVersionConfig(fabricManifest.getLatest(VersionType.release));
-
-        IBuilder builder = new Builder(config, version);
-        System.out.println(builder.buildRun());
-        Runtime.getRuntime().exec(builder.buildRun());
 
 
         //System.out.println("Type command. Type \"help\" to get more information.");
@@ -76,6 +68,18 @@ public class Main {
          */
 
 
+    }
+
+    static void testFabric(Config config) throws Exception {
+        config.chooseGameMode(GameMode.fabric);
+        IResourcesLoader fabricLoader = new FabricLoader(config.fabric);
+        IVersionManifest fabricManifest = fabricLoader.readVersionManifest();
+
+        IVersionConfig version = fabricLoader.readVersionConfig(fabricManifest.getLatest(VersionType.release));
+
+        IBuilder builder = new Builder(config, version);
+        System.out.println(builder.buildRun());
+        Runtime.getRuntime().exec(builder.buildRun());
     }
 
     static void testVanilla(Config config) throws Exception {
